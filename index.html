@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CINEXA — Movies & Shows</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Trailer modal -->
+  <div class="trailer-overlay hidden" id="trailerOverlay">
+    <div class="trailer-box">
+      <button class="trailer-close" id="trailerClose">Close</button>
+      <div class="trailer-frame-wrap">
+        <iframe id="trailerFrame" src="" allowfullscreen frameborder="0"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail modal -->
+  <div class="detail-overlay hidden" id="detailOverlay">
+    <div class="detail-card" id="detailCard">
+      <button class="detail-close" id="detailClose"></button>
+      <div class="detail-backdrop-wrap">
+        <img class="detail-backdrop" id="detailBackdrop" src="" alt="" />
+        <div class="detail-backdrop-fade"></div>
+      </div>
+      <div class="detail-body">
+        <div class="detail-left">
+          <img class="detail-poster" id="detailPoster" src="" alt="" />
+          <button class="btn-trailer hidden" id="detailTrailerBtn">Watch Trailer</button>
+          <button class="btn-fav" id="detailFavBtn">Add to Favorites</button>
+          <button class="btn-share" id="detailShareBtn">Share</button>
+        </div>
+        <div class="detail-right">
+          <p class="detail-tagline" id="detailTagline"></p>
+          <h2 class="detail-title" id="detailTitle"></h2>
+          <div class="detail-meta">
+            <span class="meta-badge" id="detailYear"></span>
+            <span class="meta-badge" id="detailRuntime"></span>
+            <span class="meta-badge meta-rating" id="detailRating"></span>
+            <span class="meta-badge meta-type" id="detailType"></span>
+          </div>
+          <div class="detail-genres" id="detailGenres"></div>
+          <p class="detail-overview" id="detailOverview"></p>
+          <!-- TV-only: seasons/episodes -->
+          <div class="detail-tv-info hidden" id="detailTvInfo">
+            <div class="tv-stats">
+              <div class="tv-stat"><span class="tv-stat-num" id="detailSeasons"></span><span class="tv-stat-label">Seasons</span></div>
+              <div class="tv-stat"><span class="tv-stat-num" id="detailEpisodes"></span><span class="tv-stat-label">Episodes</span></div>
+              <div class="tv-stat"><span class="tv-stat-num" id="detailStatus"></span><span class="tv-stat-label">Status</span></div>
+            </div>
+          </div>
+          <!-- Movie-only: budget/revenue -->
+          <div class="detail-movie-info hidden" id="detailMovieInfo">
+            <div class="tv-stats">
+              <div class="tv-stat" id="detailBudgetWrap"><span class="tv-stat-num" id="detailBudget"></span><span class="tv-stat-label">Budget</span></div>
+              <div class="tv-stat" id="detailRevenueWrap"><span class="tv-stat-num" id="detailRevenue"></span><span class="tv-stat-label">Revenue</span></div>
+            </div>
+          </div>
+          <div class="detail-cast-wrap">
+            <h4 class="cast-heading">Cast</h4>
+            <div class="detail-cast" id="detailCast"></div>
+          </div>
+          <div class="detail-similar-wrap hidden" id="detailSimilarWrap">
+            <div class="similar-heading-row">
+              <h4 class="cast-heading">More Like This</h4>
+              <div class="similar-arrows">
+                <button class="similar-arrow" id="similarPrev" aria-label="Scroll left">&#8249;</button>
+                <button class="similar-arrow" id="similarNext" aria-label="Scroll right">&#8250;</button>
+              </div>
+            </div>
+            <div class="detail-similar-track" id="detailSimilarTrack"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar menu -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <span class="sidebar-logo">CINEXA</span>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button>
+    </div>
+
+    <div class="sidebar-section-label">Browse</div>
+    <div class="sidebar-media-btns">
+      <button class="sidebar-media-btn" data-media="movie" id="sidebarMovieBtn">
+        Movies
+      </button>
+      <button class="sidebar-media-btn" data-media="tv" id="sidebarShowsBtn">
+        Shows
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">Sections</div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-nav-btn" data-section="trending">
+        Trending
+      </button>
+      <button class="sidebar-nav-btn" data-section="popular">
+        Popular
+      </button>
+      <button class="sidebar-nav-btn" data-section="toprated">
+        Top Rated
+      </button>
+      <button class="sidebar-nav-btn" data-section="upcoming">
+        Upcoming
+      </button>
+      <button class="sidebar-nav-btn" data-section="airing">
+        Now Playing & Airing
+      </button>
+      <button class="sidebar-nav-btn" data-section="favorites">
+        Favorites
+      </button>
+    </nav>
+
+    <div class="sidebar-divider"></div>
+
+    <button class="sidebar-wtw-btn" id="sidebarWtwBtn">
+      
+      <div>
+        <div class="sidebar-wtw-title">Where to Watch</div>
+        <div class="sidebar-wtw-sub">Browse streaming platforms</div>
+      </div>
+      <span class="sidebar-wtw-arrow">›</span>
+    </button>
+
+    <!-- Where to Watch panel (inline expand) -->
+    <div class="sidebar-wtw-panel hidden" id="sidebarWtwPanel">
+      <div class="wtw-grid">
+        <a class="wtw-app" href="https://www.netflix.com" target="_blank" rel="noopener">
+          <div class="wtw-logo wtw-netflix">N</div>
+          <span>Netflix</span>
+        </a>
+        <a class="wtw-app" href="https://www.disneyplus.com" target="_blank" rel="noopener">
+          <div class="wtw-logo wtw-disney">D+</div>
+          <span>Disney+</span>
+        </a>
+        <a class="wtw-app" href="https://www.amazon.com/primevideo" target="_blank" rel="noopener">
+          <div class="wtw-logo wtw-prime">P</div>
+          <span>Prime</span>
+        </a>
+        <a class="wtw-app" href="https://www.hbomax.com" target="_blank" rel="noopener">
+          <div class="wtw-logo wtw-hbo">Max</div>
+          <span>Max</span>
+        </a>
+        <a class="wtw-app" href="https://tv.apple.com" target="_blank" rel="noopener">
+          <div class="wtw-logo wtw-apple">TV+</div>
+          <span>Apple TV+</span>
+        </a>
+        <a class="wtw-app" href="https://www.paramountplus.com" target="_blank" rel="noopener">
+          <div class="wtw-logo wtw-paramount">P+</div>
+          <span>Paramount+</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Toast notification -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+        <button class="brand" id="homeBtn" title="Go to home">
+          <span class="brand-icon"></span>
+          <h1 class="brand-name">CINEXA</h1>
+        </button>
+      </div>
+      <nav class="header-nav">
+        <!-- Media type toggle hidden from header -->
+        <div class="media-toggle" id="mediaToggle" style="display:none;">
+          <button class="toggle-btn" data-media="movie">Movies</button>
+          <button class="toggle-btn" data-media="tv">Shows</button>
+        </div>
+        <div class="nav-divider" style="display:none;"></div>
+        <button class="nav-btn" data-section="trending">Trending</button>
+        <button class="nav-btn" data-section="popular">Popular</button>
+        <button class="nav-btn" data-section="toprated">Top Rated</button>
+        <button class="nav-btn" data-section="upcoming" id="upcomingBtn">Upcoming</button>
+        <button class="nav-btn" data-section="airing">Now Playing & Airing</button>
+        <button class="nav-btn" data-section="favorites">Favorites</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Search bar -->
+  <div class="search-section">
+    <div class="search-wrap">
+      <span class="search-icon"></span>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search movies & shows… (press / to focus)" autocomplete="off" />
+      <button class="search-clear hidden" id="searchClear">✕</button>
+    </div>
+    <div class="genre-bar" id="genreBar"></div>
+  </div>
+
+  <!-- Status / Error bars -->
+  <div class="status-bar hidden" id="statusBar">
+    <div class="spinner"></div>
+    <span id="statusText">Loading…</span>
+  </div>
+  <div class="error-bar hidden" id="errorBar">
+    <span id="errorText"></span>
+  </div>
+
+  <!-- Hero Spotlight Banner -->
+  <div class="hero-spotlight hidden" id="heroSpotlight">
+    <div class="hero-slides" id="heroSlides"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-tab-row" id="heroTabRow">
+        <button class="hero-tab active" data-htab="trending">Trending</button>
+        <button class="hero-tab" data-htab="popular">Popular</button>
+        <button class="hero-tab" data-htab="toprated">Top Rated</button>
+      </div>
+      <div class="hero-badge" id="heroBadge">Trending #1</div>
+      <h2 class="hero-title" id="heroTitle"></h2>
+      <div class="hero-meta" id="heroMeta"></div>
+      <div class="hero-actions">
+        <button class="hero-btn-primary" id="heroDetailsBtn">More Info</button>
+      </div>
+    </div>
+    <div class="hero-dots" id="heroDots"></div>
+    <div class="hero-progress" id="heroProgress"></div>
+  </div>
+
+  <!-- Category rows -->
+  <div class="category-rows" id="categoryRows"></div>
+
+  <!-- Section heading -->
+  <div class="section-header hidden" id="sectionHeader">
+    <h2 class="section-title" id="sectionTitle">Trending Now</h2>
+    <span class="section-count" id="sectionCount"></span>
+    <div class="upcoming-filter hidden" id="upcomingFilter">
+      <div class="cfilter-wrap" id="cfilterWrap">
+        <button class="cfilter-trigger" id="cfilterTrigger" aria-haspopup="listbox" aria-expanded="false">
+          <span class="cfilter-icon"></span>
+          <span class="cfilter-label" id="cfilterLabel">Movies</span>
+          <svg class="cfilter-chevron" id="cfilterChevron" viewBox="0 0 20 20" fill="none">
+            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="cfilter-menu" id="cfilterMenu" role="listbox">
+          <div class="cfilter-shine"></div>
+          <button class="cfilter-option" data-value="all" data-icon="" role="option">
+            <span class="cfilter-opt-icon"></span>
+            <span class="cfilter-opt-label">All</span>
+            <span class="cfilter-opt-check">✓</span>
+          </button>
+          <button class="cfilter-option" data-value="movie" data-icon="" role="option">
+            <span class="cfilter-opt-icon"></span>
+            <span class="cfilter-opt-label">Movies</span>
+            <span class="cfilter-opt-check">✓</span>
+          </button>
+          <button class="cfilter-option" data-value="tv" data-icon="" role="option">
+            <span class="cfilter-opt-icon"></span>
+            <span class="cfilter-opt-label">Shows</span>
+            <span class="cfilter-opt-check">✓</span>
+          </button>
+        </div>
+        <!-- hidden native select for JS compat -->
+        <select class="filter-dropdown-select" id="filterDropdownSelect" style="display:none;">
+          <option value="all">All</option>
+          <option value="movie" selected>Movies</option>
+          <option value="tv">Shows</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sort bar (only shown on category "See all" pages) -->
+  <div class="sort-bar hidden" id="sortBar">
+    <button class="cat-back-btn hidden" id="catBackBtn">&lt;</button>
+    <span class="sort-label">Sort by</span>
+    <div class="sort-dropdown-wrap" id="sortDropdownWrap">
+      <button class="sort-dropdown-btn" id="sortDropdownBtn" aria-haspopup="listbox" aria-expanded="false">
+        <span class="sort-dropdown-text" id="sortDropdownText">Popularity</span>
+        <svg class="sort-chevron" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <ul class="sort-dropdown-menu" id="sortDropdownMenu" role="listbox">
+        <li class="sort-option active" data-sort="popularity.desc" role="option"><span>Popularity</span>
+          <span class="sort-opt-check">✓</span>
+        </li>
+        <li class="sort-option" data-sort="release_date.desc" role="option"><span>Newest First</span>
+          <span class="sort-opt-check">✓</span>
+        </li>
+        <li class="sort-option" data-sort="release_date.asc" role="option"><span>Oldest First</span>
+          <span class="sort-opt-check">✓</span>
+        </li>
+        <li class="sort-option" data-sort="vote_average.desc" role="option"><span>Highest Rated</span>
+          <span class="sort-opt-check">✓</span>
+        </li>
+        <li class="sort-option" data-sort="mcu" role="option" style="display:none"><span>MCU</span>
+          <span class="sort-opt-check">✓</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Movie/Show grid -->
+  <main class="movie-grid hidden" id="movieGrid"></main>
+
+  <!-- Load more -->
+  <div class="load-more-wrap hidden" id="loadMoreWrap">
+    <button class="btn-load-more" id="loadMoreBtn">Load More</button>
+  </div>
+
+  <!-- Back to top -->
+  <button class="back-top" id="backTopBtn" title="Back to top">↑</button>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>Powered by <a href="https://www.themoviedb.org" target="_blank">TMDB API</a> · CINEXA — Movies &amp; Shows Explorer</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
